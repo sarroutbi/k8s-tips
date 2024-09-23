@@ -1,0 +1,755 @@
+Get description of a pod:
+-------------------------
+kubectl describe pod green
+kubectl get pod web
+
+Get all pods running:
+---------------------
+kubectl get pods
+
+Get all deploments running:
+---------------------------
+kubectl get deployments
+
+Get information of a particular k8s type:
+-----------------------------------------
+kubectl explain pod
+kubectl explain pod.spec.restartPolicy
+
+Dump POD to file:
+-----------------
+kubectl get pod green -o yaml > green.yaml
+
+Export POD port:
+----------------
+kubectl port-forward green 8081:8080
+# local:internal
+firefox localhost:8081
+
+Dump logs:
+----------
+kubectl logs blue
+
+Top pods:
+---------
+kubectl top pods
+
+Minikube dashboard:
+-------------------
+minikube dashboard
+
+Execute terminal:
+-----------------
+kubectl exec -ti blue /bin/bash
+
+krew installation:
+------------------
+(
+  set -x; cd "$(mktemp -d)" &&
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.tar.gz" &&
+  tar zxvf krew.tar.gz &&
+  KREW=./krew-"${OS}_${ARCH}" &&
+  "$KREW" install krew
+)
+
+krew package installation:
+--------------------------
+kubectl krew search tree
+kubectl krew install tree
+
+get api resources:
+------------------
+kubectl api-resources
+
+edit deployment:
+----------------
+kubectl edit deployment green-blue
+
+kubectl contexts:
+-----------------
+# context selection
+kubectl config get-contexts
+kubectl config current-context
+kubectl config use-context minikube
+
+# dumps config:
+kubectl config view
+kubectl config --kubeconfig=kubeconfig_file_to_add
+
+# Add file to config
+export KUBECONFIG=$KUBECONFIG:config-file-to-add:~/.kube/config
+
+# Export config to configuration file
+# IMPORTANT: --raw required to dump certificate data and not omit it
+kubectl config view --raw > ~/.kube/config
+
+Operator creation:
+------------------
+operator-sdk init --domain redhat --repo github.com/latchset/tang-operator
+operator-sdk create api --group daemons --version v1alpha1 --kind TangServer --resource --controller
+
+Operator deployment:
+--------------------
+# ensure olm is installed:
+operator-sdk olm install
+# ensure clusteradmin role
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user sarroutb
+
+make docker-build docker-push IMG="quay.io/sec-eng-special/tang-operator:v0.0.26"
+make bundle IMG="quay.io/sec-eng-special/tang-operator:v0.0.26"
+make bundle-build bundle-push BUNDLE_IMG="quay.io/sec-eng-special/tang-operator-bundle:v0.0.26"
+operator-sdk run bundle --timeout 5m quay.io/sec-eng-special/tang-operator-bundle:latest
+operator-sdk run bundle --timeout 5m quay.io/sec-eng-special/tang-operator-bundle:v0.0.26
+
+# Alternative building with podman
+make podman-build podman-push IMG="quay.io/sec-eng-special/tang-operator:v1.0.6"
+make bundle IMG="quay.io/sec-eng-special/tang-operator:v1.0.6"
+make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sec-eng-special/tang-operator-bundle:v1.0.6"
+
+# For personal quay.io repository
+make podman-build podman-push IMG="quay.io/sarroutb/tang-operator:v1.0.6"
+make bundle IMG="quay.io/sarroutb/tang-operator:v1.0.6"
+make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sarroutb/tang-operator-bundle:v1.0.6"
+
+# IMPORTANT: if, for any reason, operator-sdk run fails, deployment can be performed via 'make deploy IMG="quay.io/sarroutbi/tang-operator:v0.0.24"'
+
+#In case issues on deployment, use particular opm version
+operator-sdk run bundle --timeout 5m quay.io/sec-eng-special/tang-operator-bundle:v0.0.25 --index-image=quay.io/operator-framework/opm:v1.23.0
+
+# Note: For execution of tests, from operator root file:
+make test
+
+# For inspection of coverage, use go tool:
+go tool cover -html=cover.out
+
+Tang operator beaker tests:
+---------------------------
+# Repository
+https://github.com/RedHat-SP-Security/tests.git
+
+# Execution
+make
+
+# Execution with particular tang image (for minikube)
+TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
+
+# Cluster execution
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc make
+
+# Cluster execution with particular namespace for operator
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc OPERATOR_NAMESPACE=openshift-operators make
+
+# Cluster execution with particular namespace for operator and avoiding operator installation
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc OPERATOR_NAMESPACE=openshift-operators DISABLE_BUNDLE_INSTALL_TESTS=1 make
+
+# Cluster execution wth extra run bundle parameters
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc RUN_BUNDLE_PARAMS=--index-image=quay.io/operator-framework/opm:v1.23.0 make
+
+# Debug local execution with particular IMAGE_VERSION, particular run bundle parameters and non default operator namespace
+V=1 IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v0.0.26" RUN_BUNDLE_PARAMS="--index-image=quay.io/operator-framework/opm:v1.23.0" OPERATOR_NAMESPACE=openshift-tang-operator make
+
+# Cluster execution ith particular IMAGE_VERSION, particular run bundle parameters and verbose
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc V=1 IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v0.0.26" RUN_BUNDLE_PARAMS="--index-image=quay.io/operator-framework/opm:v1.23.0" make
+
+# Cluster execution with downstream version
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc DOWNSTREAM_IMAGE_VERSION=quay.io/sec-eng-special/tang-operator-bundle:1.0.0-23 OPERATOR_NAMESPACE=openshift-operators make
+
+# Cluster execution with TMT:
+IMAGE_VERSION="quay.io/sec-eng-special/tang-operator-bundle:v0.0.26" TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc tmt --context distro=rhel-9.3.0 run plan --name operator-oc -vvv prepare discover -h fmf -vv provision --how=local execute --how tmt --interactive login finish
+
+Operator SDK tang-operator basis:
+---------------------------------
+group=daemons
+domain=redhat
+
+Only deployment:
+----------------
+# NOTE: this is used to deploy the operator from the code already available in github
+make deploy IMG="sec-eng-special/tang-operator:v0.0.24"
+
+Undeployment:
+-------------
+make undeploy
+
+Operator uninstallation:
+------------------------
+operator-sdk cleanup tang-operator
+
+Operator Uninstallation:
+------------------------
+operator-sdk cleanup tang-operator
+
+Operator clusterservice modifications:
+--------------------------------------
+kubectl edit clusterroles.rbac.authorization.k8s.io tang-operator-manager-role
+# Then add next to clusterroles:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+
+Start of docker-crd:
+--------------------
+sudo systemctl start cri-docker.socket
+systemctl daemon-reload
+systemctl enable cri-docker.service
+systemctl enable --now cri-docker.socket
+systemctl status cri-docker.service
+systemctl status cri-docker.socket
+
+Dockerd launch:
+---------------
+sudo dockerd&
+sudo cri-dockerd&
+
+Minikube:
+---------
+minikube version
+minikube start
+minikube stop
+minikube dashboard
+
+Minikube to use podman:
+-----------------------
+minikube start --driver=podman
+minikube config set driver podman
+$ sudo visudo
+### Then append the following to the section at the very bottom of the file where username is your user account.
+username ALL=(ALL) NOPASSWD: /usr/bin/podman
+### Be sure this text is after #includedir /etc/sudoers.d. To confirm it worked, try:
+
+sudo -k -n podman version
+minikube start --alsologtostderr -v=7
+
+Setting minikube config (cpus, memory):
+---------------------------------------
+minikube config set memory 16G
+minikube config set cpus 4
+
+Minikube reset docker:
+----------------------
+unset DOCKER_CERT_PATH
+unset DOCKER_HOST
+unset DOCKER_TLS_VERIFY
+unset MINIKUBE_ACTIVE_DOCKERD
+
+Minikube unset podman:
+----------------------
+unset CONTAINER_HOST
+unset CONTAINER_SSHKEY
+unset MINIKUBE_ACTIVE_PODMAN
+
+Kubernetes:
+-----------
+* Summary of the most important commands:
+kubectl version
+kubectl cluster-info
+kubectl get nodes
+kubectl get pods
+kubectl get pods -o wide
+kubectl describe pods
+kubectl logs $POD_NAME
+kubectl exec $POD_NAME "command"
+kubectl exec -ti $POD_NAME bash
+kubectl get services
+kubectl describe services
+kubectl describe services/"service"
+kubectl describe services/kubernetes-bootcamp
+kubectl describe deployment
+kubectl scale deployments/kubernetes-bootcamp --replicas=4
+kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2
+kubectl rollout status deployments/kubernetes-bootcamp
+kubectl rollout undo deployments/kubernetes-bootcamp
+
+* Create a particular application in the cluster by creating a deployment:
+  ------------------------------------------------------------------------
+$ kubectl run kubernetes-bootcamp --image=docker.io/jocatalin/kubernetes-bootcamp:v1 --port=8080
+$ kubectl get deployments
+NAME                 DESIRED CURRENT UP-TO-DATE AVAILABLE
+kubernetes-bootcamp  1       1       1          1
+
+* Start a proxy:
+  --------------
+$ kubectl proxy
+Starting to serve on 127.0.0.1:8001
+// This creates a connection between host and the Kubernetes cluster. It is a blocking operation (console is interrupted as proxy stays listening)
+// After previous command, the version of the proxy can be prompted
+
+$ curl http://localhost:8001/version
+{
+...
+  "gitVersion": "v1.5.2",
+...
+}
+
+* Check status of pods:
+  ---------------------
+$ kubectl get pods
+NAME                                READY  STATUS             RESTARTS   AGE
+kubernets-bootcamp-380283404-nnddw  0/1    ContainerCreating  0          5s
+
+$ kubectl get pods
+NAME                                READY  STATUS             RESTARTS   AGE
+kubernets-bootcamp-380283404-nnddw  1/1    Running            0          20s
+
+// With the name of the POD, an  HTTP request to the application running can be performed:
+$ curl http://localhost:8001/api/v1/proxy/namespaces/default/pods/kubernets-bootcamp-380283404-nnddw/
+Hello kubernetes bootcamp ! | Running on kubernets-bootcamp-380283404-nnddw | v=1
+// IMPORTANT: curl query must end with "/"
+
+* Check POD logs:
+  ---------------
+$ export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+$ kubectl logs $POD_NAME
+// This will show, for example, the number of requests received by application running in the POD
+
+* Execute command in POD:
+  -----------------------
+$ kubectl exec $POD_NAME env
+PATH=...
+NODE-VERSION=6.3.1
+HOME=/root
+
+* Open terminal on POD:
+  ---------------------
+$ kubectl exec -ti $POD_NAME bash
+// NOTE: Inside container, the service can be checked via:
+root@kubernetes-boocamp-380283404-nnddw:/# curl localhost:8080
+Hello kubernetes bootcamp ! | Running on kubernets-bootcamp-380283404-nnddw | v=1
+// NOTE: To exit from container
+root@kubernetes-boocamp-380283404-nnddw:/# exit
+
+* Services:
+  ---------
+$ kubectl get services
+NAME ...
+kubernetes
+// NOTE: When started, kubernetes create at least that service
+
+* Creating a new service and expose it externally:
+  ------------------------------------------------
+$ kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
+service "kubernetes-bootcamp "exposed
+
+$ kubectl get services
+NAME                   TYPE       CLUSTER-IP     EXTERNAL-IP     PORT(S)         AGE
+kubernetes             ClusterIP  10.0.0.1       <none>          443/TCP         10m
+kubernetes-bootcamp    NodePort   10.0.0.72      <none>          8080:30216/TCP  32s
+
+$ kubectl describe services/kubernetes-bootcamp
+...
+NodePort: 30216/TCP
+...
+$ curl host01:30216
+Hello kubernetes bootcamp ! | Running on kubernets-bootcamp-310237122-gcxdw | v=1
+
+// NOTE: PORT can be automatically extracted with:
+export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')
+$ curl host01:$NODE_PORT
+
+* Checking a POD label in deployment:
+  ----------------------------------
+$ kubectl describe deployment
+Name: kubernetes-bootcamp
+....
+Pod Template:
+  Labels: run=kubernetes-bootcamp
+
+$ kubectl get pods -l run=kubernetes-bootcamp
+$ kubectl get services -l run=kubernetes-bootcamp
+
+* Apply a new label:
+  ------------------
+$ export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+$ kubectl label pod $POD_NAME app=v1
+$ kubectl describe pods $POD_NAME
+...
+Labels:  app=v1
+         run=kubernetes-bootcamp
+...
+$ kubectl get pods -l app=v1
+
+* Service delete:
+  ---------------
+$ kubectl delete service -l run=kubernetes-bootcamp
+// NOTE: service will be removed, no access to service possible through NODE_PORT
+
+* Manual scaling:
+  ---------------
+$ kubectl get deployments
+NAME                 DESIRED CURRENT UP-TO-DATE AVAILABLE
+kubernetes-bootcamp  1       1       1          1
+
+$ kubectl scale deployments/kubernetes-bootcamp --replicas=4
+deployment "kubernetes-bootcamp" scaled
+
+$ kubectl get deployments
+NAME                 DESIRED CURRENT UP-TO-DATE AVAILABLE
+kubernetes-bootcamp  4       4       4          4
+
+// NOTE: if curl performed to the service that is scaled, it can be seend
+// that each request is responded by a different POD
+
+// NOTE2: Scale down is just decreasing the number of replicas
+$ kubectl scale deployments/kubernetes-bootcamp --replicas=2
+deployment "kubernetes-bootcamp" scaled
+
+$ kubectl get deployments
+NAME                 DESIRED CURRENT UP-TO-DATE AVAILABLE
+kubernetes-bootcamp  2       2       2          2
+
+* Rolling updates:
+  ----------------
+  Rolling updates allow Deployments' update to take place with zero downtime by incrementally updating Pods instances with new ones.
+
+$ kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2
+// NOTE: previous command will perform the upgrade of the image. Removal of applications and
+// startup of the new PODS with the new image will be performed on the deployment.
+
+$ kubectl get pods
+.... STATUS
+....
+.... Terminating
+....
+.... Running
+
+$ kubectl rollout status deployments/kubernetes-bootcamp
+
+// NOTE: In case a rollout is specified, but it can not be performed, it can be undone
+$ kubectl rollout undo deployments/kubernetes-bootcamp
+
+Openshift's specific:
+---------------------
+# Ensure installation of Tang Operator does not require a particular security constraint
+oc adm policy add-scc-to-group anyuid system:authenticated
+
+Minishift login details:
+------------------------
+The server is accessible via web console at:
+https://192.168.42.29:8443/console
+
+You are logged in as:
+User:     developer
+Password: <any value>
+
+To login as administrator/root in OpenShift:
+oc login -u system:admin
+
+Install operators in minishift:
+-------------------------------
+# Follow steps on next link:
+https://dev4devs.com/2019/03/25/kubernates-openshift-how-to-install-deploy-use-olm-operator-lifecycle-manager-in-minishift/
+
+# NOTE: When it says:
+oc create -f deploy/okd/manifests/latest/
+# it is indeed:
+oc create -f deploy/upstream/manifests/latest/
+
+Code Ready Containers information:
+----------------------------------
+#The server is accessible via web console at:
+https://console-openshift-console.apps-crc.testing
+
+#Log in as administrator:
+Username: kubeadmin
+Password: 4ukbQ-uDtuH-bmuB4-6dqI5
+
+#Log in as user:
+Username: developer
+Password: developer
+
+#Use the 'oc' command line interface:
+$ eval $(crc oc-env)
+$ oc login -u developer https://api.crc.testing:6443
+
+#Code ready installation for system without systemctl
+crc config set skip-check-daemon-systemd-unit true
+crc config set skip-check-daemon-systemd-sockets true
+crc config set skip-check-network-manager-running true
+crc config set skip-check-network-manager-installed true
+crc config set skip-check-network-manager-config true
+
+Get extended information for pod:
+---------------------------------
+kubectl get pod tangserver --output=yaml --namespace=nbde
+
+Start Minikube with addon:
+--------------------------
+minikube start --addons=metrics-server
+
+Execute scorecard tests:
+------------------------
+operator-sdk scorecard -w 60s quay.io/sec-eng-special/tang-operator-bundle:v0.0.24
+
+Extracting thumprints with jose:
+--------------------------------
+# what you need is something like:
+jose jwk thp -i- -a <hash here> <file>
+# S1 = sha1, S256 = sha256
+# Examples:
+[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S1 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk
+Gw9ZtDnys_W0KQEqcVFGvzZjfaI
+[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S256 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk
+RRsKpO9dTcIaBIV-CL6LYB9RgsZpZ7NYNuy7P7tXMJo
+
+Slack workspace for k8s cluster:
+--------------------------------
+coreos.slack.com
+
+Launching a particular version in K8S cluster (slack):
+------------------------------------------------------
+# More updated (aws is now default):
+launch 4.12.0-ec.5 gcp
+launch 4.14 aws
+launch 4.14 gcp
+
+Launching a particular version in K8S ROSA cluster (slack):
+-----------------------------------------------------------
+# Create cluster
+rosa create
+rosa create 4.12.16
+rosa create 4.13.6
+# Create cluster with duration
+rosa create 4.13.6 4h
+# Look for versions:
+rosa lookup 4.12
+rosa lookup 4.13
+# Describe cluster
+rosa describe s9h9g-9b6nj-x94
+
+cgit/dist-git repositories for tang and tang-bundle:
+----------------------------------------------------
+https://pkgs.devel.redhat.com/cgit/containers/tang-operator
+https://pkgs.devel.redhat.com/cgit/containers/tang-operator-bundle
+
+Check the installed PODS after installing from Catalogue Source:
+----------------------------------------------------------------
+$ oc get pods -nopenshift-marketplace
+NAME                                                              READY   STATUS                  RESTARTS      AGE
+09274a05c09c9be6e1d8d7c56460b7bf66916a8a10c3463831424a2b51x2b6f   0/1     Init:ImagePullBackOff   0             7m20s
+certified-operators-mfxw2                                         1/1     Running                 0             86m
+community-operators-m4tcr                                         1/1     Running                 0             86m
+marketplace-operator-6668fb46c8-jxxr8                             1/1     Running                 1 (80m ago)   92m
+redhat-marketplace-ksdcj                                          1/1     Running                 0             86m
+redhat-operators-rfnrp                                            1/1     Running                 0             86m
+tang-operator-catalogue-nrhcj                                     1/1     Running                 0             20m
+
+$ oc -n openshift-marketplace describe pod 09274a05c09c9be6e1d8d7c56460b7bf66916a8a10c3463831424a2b51x2b6f
+
+Script used by compliance operator to generate index:
+-----------------------------------------------------
+https://gitlab.cee.redhat.com/aosqe/compliance-operator/-/blob/master/vars/buildIndexImage.groovy
+
+How to generate and index in quay from a particular registry-proxy.engineering.redhat.com image:
+------------------------------------------------------------------------------------------------
+./tang_index.sh registry-proxy.engineering.redhat.com/rh-osbs/tang-operator-bundle@sha256:fceb6d82cea8fd14be1b0ebc0333d314ec5bd2c88199c0aa63377d12c6f4db6e 0.0.24-6
+
+How to configure a secret for docker when using minikube and access to registry.redhat.io:
+------------------------------------------------------------------------------------------
+$ cat quay_secret/daemons_v1alpha1_tangserver_secret_registry_redhat_io.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tangserversecret
+  namespace: nbde
+data:
+  # Set your base64 docker config here. To do so:
+  # 1 - Docker login to the private registry
+  # 2 - Annotate the docker config.json created (~/.docker/config.json normally)
+  # 3 - copy in next line output to 'base64 ~/.docker/config.json' command
+  .dockerconfigjson: eyJh....X0=
+type: kubernetes.io/dockerconfigjson
+
+Productization:
+---------------
+HB/Integration image types:
+* The image and usage type for the operator:
+Image_type: "Operator Controller"
+Usage_type: "Operator image"
+
+* The image and usage type for the operator bundle:
+Image_type: "Operator Bundle Image"
+Usage_type: "Operator Bundle"
+
+Configuration for issues with securityContext in OpenShift:
+-----------------------------------------------------------
+Must add next configuration:
+spec:
+  containers:
+    - name: whatever
+...
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: "RuntimeDefault"
+
+Get information of tangservers with "oc":
+-----------------------------------------
+oc get --raw /apis/daemons.redhat.com/v1alpha1/namespaces/nbde/tangservers
+oc get --raw /apis/daemons.redhat.com/v1alpha1/namespaces/nbde/tangservers | jq
+# check the api version:
+oc config view
+...
+  server: https://api.ci-ln-n3gvbqk-72292.origin-ci-int-gce.dev.rhcloud.com:6443
+
+
+Dast:
+-----
+# Execution:
+helm install rapidast ./helm/chart/ --set-file rapidastConfig=/home/sarroutb/RedHat/TASKS/TANG_OPERATOR/github/sarroutbi/tang-operator/tools/scan_tools/tang_operator.yaml
+# Result retrieving:
+bash ./helm/results.sh
+
+### Information regarding Dast from jrmoreno:
+# jenkins job definition:
+https://gitlab.cee.redhat.com/frmoreno/ocp-edge-ci/-/blob/dast_testing/jenkins/jobs/testing/dast_testing.groovy
+# rapidast config:
+https://gitlab.cee.redhat.com/frmoreno/ocp-edge-ci/-/blob/dast_testing/infra/dast/far_operator.conf
+# Important:
+https://gitlab.cee.redhat.com/frmoreno/ocp-edge-ci/-/blame/dast_testing/infra/dast/far_operator.conf#L20
+# El job obtiene la definicion de la api del cluster en cada ejecución, para adaptarse a cualquier cambio. Por eso primero se obtiene el token y se pone en el archivo.
+# Aquí una ejecución del job:
+https://auto-jenkins-csb-kniqe.apps.ocp-c1.prod.psi.redhat.com/job/Private_Folders/job/frmoreno/job/DAST_frmoreno/job/DAST_frmoreno/76/
+# Importante también, utilizar la rama "development" del repo de rapidast, porque utiliza un puerto distinto que la master para dirigir el scanneo.
+# El puerto definido en la master ya está en uso en el cluster y no deja.
+
+# Get default token
+oc get secret $(oc get secret | grep ^default-token | awk '{print $1}') -o json | jq -Mr '.data.token' | base64 -d
+
+# In helm/char/values.yaml:
+You'll need to set secContext: '{"privileged": true}' at your helm/chart/values.yaml
+(e.g. https://github.com/RedHatProductSecurity/rapidast/blob/development/helm/chart/values.yaml#L14).
+Otherwise, you’ll get ‘violates PodSecurity’ errors.
+
+List available operators in catalogue:
+--------------------------------------
+oc get packagemanifest
+
+Tag image from registry to quay:
+--------------------------------
+podman pull registry-proxy.engineering.redhat.com/rh-osbs/nbde-tang-server-tang-operator-bundle:1.0.0-34
+# Regenerate with correct container image (In folder from repo: https://github.com/sarroutbi/proxy-engineering-img.git)
+docker build . -t quay.io/sec-eng-special/nbde-tang-server-tang-operator-bundle:1.0.0-34
+podman push quay.io/sec-eng-special/nbde-tang-server-tang-operator-bundle:1.0.0-34
+
+
+Application for DAST/Rapidast file open:
+----------------------------------------
+# ZAP (Java Application)
+https://www.zaproxy.org/download/
+
+CPaaS NBDE Tang Server Product Listing:
+---------------------------------------
+https://comet.engineering.redhat.com/containers/products/651c310f3b4c44380c45b7c9
+
+RDU -> Raleigh
+PNQ -> Pune
+
+Retrieve latest go dependencies:
+--------------------------------
+go get -u ./...
+go mod tidy
+
+Helm attestation-operator:
+--------------------------
+helm push /home/sarroutb/RedHat/TASKS/KEYLIME/ATTESTATION_OPERATOR/github/sarroutbi/attestation-operator/build/artifacts/keylime-0.1.0.tgz oci://quay.io/sec-eng-special/openshift-attestation-operator-helm
+helm install attestation-operator oci://quay.io/sec-eng-special/openshift-attestation-operator-helm/keylime --namespace keylime
+
+Check helm release deployed values:
+-----------------------------------
+helm -n keylime get all attestation-operator
+
+Check helm installation history:
+--------------------------------
+helm -n keylime history attestation-operator
+REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION
+1               Wed Nov 15 15:26:25 2023        superseded      keylime-0.1.0   latest          Install complete
+2               Wed Nov 15 15:29:10 2023        superseded      keylime-0.1.0   latest          Upgrade complete
+3               Wed Nov 15 15:30:02 2023        deployed        keylime-0.1.0   latest          Upgrade complete
+
+Get bundle image from image already released in catalog:
+--------------------------------------------------------
+# 1 Install operator (through web interface, for example)
+# 2 Obtain path from IP (install plan):
+oc describe installplan -n openshift-operators | grep -i bundle | grep -i "Path:"
+    Path:         registry.redhat.io/nbde-tang-server/tang-operator-bundle@sha256:a77d39ded03271f2deb8b438abd4328a1846ee0d4886cce14d869ba61f84d600
+# OR (abbreviated):
+oc describe ip -n openshift-operators | grep -i bundle | grep -i "Path:"
+    Path:         registry.redhat.io/nbde-tang-server/tang-operator-bundle@sha256:a77d39ded03271f2deb8b438abd4328a1846ee0d4886cce14d869ba61f84d600
+
+Test Attestation Operator installation:
+---------------------------------------
+make docker-build docker-push IMG="quay.io/sarroutb/osdk-attestation-operator:v0.0.1"
+make bundle IMG="quay.io/sarroutb/osdk-attestation-operator:v0.0.1"
+make bundle-build bundle-push BUNDLE_IMG="quay.io/sarroutb/osdk-attestation-operator-bundle:v0.0.1"
+operator-sdk run bundle --timeout 5m quay.io/sarroutb/osdk-attestation-operator-bundle:v0.0.1
+
+Attestation Operator go based controller (kubebuilder version, no bundle):
+--------------------------------------------------------------------------
+DOCKER_TAG=quay.io/sarroutb/keylime-attestation-operator:v0.1.0 make docker-build docker-push
+DOCKER_TAG=quay.io/sarroutb/keylime-attestation-operator:v0.1.0 make deploy
+
+Attestation Operator go based controller (kubebuilder version, bundle):
+-----------------------------------------------------------------------
+make docker-build docker-push DOCKER_TAG=quay.io/sarroutb/keylime-attestation-operator:v0.1.0
+make bundle DOCKER_TAG=quay.io/sarroutb/keylime-attestation-operator:v0.1.0
+make bundle-build bundle-push BUNDLE_IMG="quay.io/sarroutb/keylime-attestation-operator-bundle:v0.1.0"
+operator-sdk --verbose run bundle quay.io/sarroutb/keylime-attestation-operator-bundle:v0.1.0
+
+# Shorter alternative
+make docker-build docker-push DOCKER_TAG=quay.io/sarroutb/attestation-operator:v0.1.0
+make bundle DOCKER_TAG=quay.io/sarroutb/attestation-operator:v0.1.0
+make bundle-build bundle-push BUNDLE_IMG="quay.io/sarroutb/attestation-operator-bundle:v0.1.0"
+operator-sdk --namespace keylime --verbose run bundle quay.io/sarroutb/attestation-operator-bundle:v0.1.0
+
+# Shorter alternative (through podman)
+make podman-build podman-push DOCKER_TAG=quay.io/sarroutb/attestation-operator:v0.1.0
+BUNDLE_VERSION=0.1.0 make podman-bundle DOCKER_TAG=quay.io/sarroutb/attestation-operator:v0.1.0
+make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sarroutb/attestation-operator-bundle:v0.1.0"
+operator-sdk --namespace keylime --verbose run bundle quay.io/sarroutb/attestation-operator-bundle:v0.1.0
+
+
+# Shorter alternative (sec-eng-special)
+make docker-build docker-push DOCKER_TAG=quay.io/sec-eng-special/attestation-operator:v0.1.0
+make bundle DOCKER_TAG=quay.io/sec-eng-special/attestation-operator:v0.1.0
+make bundle-build bundle-push BUNDLE_IMG="quay.io/sec-eng-special/attestation-operator-bundle:v0.1.0"
+operator-sdk --namespace keylime --verbose run bundle quay.io/sec-eng-special/attestation-operator-bundle:v0.1.0
+
+# Cleanup
+operator-sdk cleanup attestation-operator
+
+# Cleanup (namespace)
+operator-sdk --namespace keylime cleanup attestation-operator
