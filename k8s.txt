@@ -74,7 +74,7 @@ kubectl config get-contexts
 kubectl config current-context
 kubectl config use-context minikube
 
-# dumps config:
+# dumps config: 
 kubectl config view
 kubectl config --kubeconfig=kubeconfig_file_to_add
 
@@ -104,14 +104,29 @@ operator-sdk run bundle --timeout 5m quay.io/sec-eng-special/tang-operator-bundl
 operator-sdk run bundle --timeout 5m quay.io/sec-eng-special/tang-operator-bundle:v0.0.26
 
 # Alternative building with podman
-make podman-build podman-push IMG="quay.io/sec-eng-special/tang-operator:v1.0.6"
-make bundle IMG="quay.io/sec-eng-special/tang-operator:v1.0.6"
-make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sec-eng-special/tang-operator-bundle:v1.0.6"
+make podman-build podman-push IMG="quay.io/sec-eng-special/tang-operator:v1.0.12"
+make bundle IMG="quay.io/sec-eng-special/tang-operator:v1.0.12"
+make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sec-eng-special/tang-operator-bundle:v1.0.12"
 
 # For personal quay.io repository
 make podman-build podman-push IMG="quay.io/sarroutb/tang-operator:v1.0.6"
 make bundle IMG="quay.io/sarroutb/tang-operator:v1.0.6"
 make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sarroutb/tang-operator-bundle:v1.0.6"
+
+# For personal quay.io repository (nbde-tang-server)
+make podman-build podman-push IMG="quay.io/sarroutb/nbde-tang-server:v1.0.14"
+make bundle IMG="quay.io/sarroutb/nbde-tang-server:v1.0.14"
+make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sarroutb/nbde-tang-server-bundle:v1.0.14"
+
+# For nbde-tang-server personal repository
+make podman-build podman-push IMG="quay.io/sarroutb/nbde-tang-server:v1.0.11"
+make bundle IMG="quay.io/sarroutb/nbde-tang-server:v1.0.11"
+make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sarroutb/nbde-tang-server-bundle:v1.0.11"
+
+# For nbde-tang-server personal repository
+make podman-build podman-push IMG="quay.io/sec-eng-special/nbde-tang-server:v1.0.14"
+make bundle IMG="quay.io/sec-eng-special/nbde-tang-server:v1.0.14"
+make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sec-eng-special/nbde-tang-server-bundle:v1.0.14"
 
 # IMPORTANT: if, for any reason, operator-sdk run fails, deployment can be performed via 'make deploy IMG="quay.io/sarroutbi/tang-operator:v0.0.24"'
 
@@ -134,6 +149,9 @@ make
 
 # Execution with particular tang image (for minikube)
 TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
+IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v1.0.13" TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
+# With specific operator name
+OPERATOR_NAME=nbde-tang-server V=1 IMAGE_VERSION="quay.io/sarroutb/nbde-tang-server-bundle:v1.0.14" TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
 
 # Cluster execution
 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc make
@@ -154,7 +172,7 @@ V=1 IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v0.0.26" RUN_BUNDLE_PAR
 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc V=1 IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v0.0.26" RUN_BUNDLE_PARAMS="--index-image=quay.io/operator-framework/opm:v1.23.0" make
 
 # Cluster execution with downstream version
-TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc DOWNSTREAM_IMAGE_VERSION=quay.io/sec-eng-special/tang-operator-bundle:1.0.0-23 OPERATOR_NAMESPACE=openshift-operators make
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc DOWNSTREAM_IMAGE_VERSION=quay.io/sec-eng-special/tang-operator-bundle:1.0.0-23 OPERATOR_NAMESPACE=openshift-operators make 
 
 # Cluster execution with TMT:
 IMAGE_VERSION="quay.io/sec-eng-special/tang-operator-bundle:v0.0.26" TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc tmt --context distro=rhel-9.3.0 run plan --name operator-oc -vvv prepare discover -h fmf -vv provision --how=local execute --how tmt --interactive login finish
@@ -361,7 +379,7 @@ kubernetes
 $ kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
 service "kubernetes-bootcamp "exposed
 
-$ kubectl get services
+$ kubectl get services 
 NAME                   TYPE       CLUSTER-IP     EXTERNAL-IP     PORT(S)         AGE
 kubernetes             ClusterIP  10.0.0.1       <none>          443/TCP         10m
 kubernetes-bootcamp    NodePort   10.0.0.72      <none>          8080:30216/TCP  32s
@@ -517,9 +535,9 @@ Extracting thumprints with jose:
 jose jwk thp -i- -a <hash here> <file>
 # S1 = sha1, S256 = sha256
 # Examples:
-[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S1 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk
+[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S1 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk 
 Gw9ZtDnys_W0KQEqcVFGvzZjfaI
-[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S256 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk
+[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S256 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk 
 RRsKpO9dTcIaBIV-CL6LYB9RgsZpZ7NYNuy7P7tXMJo
 
 Slack workspace for k8s cluster:
@@ -532,6 +550,12 @@ Launching a particular version in K8S cluster (slack):
 launch 4.12.0-ec.5 gcp
 launch 4.14 aws
 launch 4.14 gcp
+# For a particular architecture:
+launch 4.16.0-0.nightly-arm64-2024-10-09-181834 arm64
+# To find builds:
+https://arm64.ocp.releases.ci.openshift.org/
+# Multiarch:
+launch 4.18.0-0.nightly-multi-2024-10-18-023430 multi
 
 Launching a particular version in K8S ROSA cluster (slack):
 -----------------------------------------------------------
@@ -607,7 +631,7 @@ Must add next configuration:
 spec:
   containers:
     - name: whatever
-...
+...    
     securityContext:
       allowPrivilegeEscalation: false
       runAsNonRoot: true
@@ -624,7 +648,6 @@ oc get --raw /apis/daemons.redhat.com/v1alpha1/namespaces/nbde/tangservers | jq
 oc config view
 ...
   server: https://api.ci-ln-n3gvbqk-72292.origin-ci-int-gce.dev.rhcloud.com:6443
-
 
 Dast:
 -----
@@ -648,6 +671,9 @@ https://auto-jenkins-csb-kniqe.apps.ocp-c1.prod.psi.redhat.com/job/Private_Folde
 
 # Get default token
 oc get secret $(oc get secret | grep ^default-token | awk '{print $1}') -o json | jq -Mr '.data.token' | base64 -d
+
+# Get token for operator
+oc get secret $(oc get secret | grep ^nbde-tang-server | awk '{print $1}') -o json | jq -Mr '.data'  | awk -F '".dockercfg":' '{print $2}' | tr -d ' ' | tr -d '"' | base64 -d | jq
 
 # In helm/char/values.yaml:
 You'll need to set secContext: '{"privileged": true}' at your helm/chart/values.yaml
@@ -695,7 +721,8 @@ helm -n keylime get all attestation-operator
 Check helm installation history:
 --------------------------------
 helm -n keylime history attestation-operator
-REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION
+REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION     
+=======
 1               Wed Nov 15 15:26:25 2023        superseded      keylime-0.1.0   latest          Install complete
 2               Wed Nov 15 15:29:10 2023        superseded      keylime-0.1.0   latest          Upgrade complete
 3               Wed Nov 15 15:30:02 2023        deployed        keylime-0.1.0   latest          Upgrade complete
@@ -753,3 +780,8 @@ operator-sdk cleanup attestation-operator
 
 # Cleanup (namespace)
 operator-sdk --namespace keylime cleanup attestation-operator
+
+Jira status refresh on PR:
+--------------------------
+/jira refresh
+/jira recheck
