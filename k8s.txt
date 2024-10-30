@@ -74,7 +74,7 @@ kubectl config get-contexts
 kubectl config current-context
 kubectl config use-context minikube
 
-# dumps config: 
+# dumps config:
 kubectl config view
 kubectl config --kubeconfig=kubeconfig_file_to_add
 
@@ -152,6 +152,9 @@ TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
 IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v1.0.13" TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
 # With specific operator name
 OPERATOR_NAME=nbde-tang-server V=1 IMAGE_VERSION="quay.io/sarroutb/nbde-tang-server-bundle:v1.0.14" TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
+# Konflux build:
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc KONFLUX=1 OPERATOR_NAME=nbde-tang-server V=1 IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-bundle@sha256:4aa068a00d01c5883dfb657c01639d563c76a4303dd4f17562b054922189814e" make
+
 
 # Cluster execution
 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc make
@@ -172,7 +175,7 @@ V=1 IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v0.0.26" RUN_BUNDLE_PAR
 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc V=1 IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v0.0.26" RUN_BUNDLE_PARAMS="--index-image=quay.io/operator-framework/opm:v1.23.0" make
 
 # Cluster execution with downstream version
-TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc DOWNSTREAM_IMAGE_VERSION=quay.io/sec-eng-special/tang-operator-bundle:1.0.0-23 OPERATOR_NAMESPACE=openshift-operators make 
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc DOWNSTREAM_IMAGE_VERSION=quay.io/sec-eng-special/tang-operator-bundle:1.0.0-23 OPERATOR_NAMESPACE=openshift-operators make
 
 # Cluster execution with TMT:
 IMAGE_VERSION="quay.io/sec-eng-special/tang-operator-bundle:v0.0.26" TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc tmt --context distro=rhel-9.3.0 run plan --name operator-oc -vvv prepare discover -h fmf -vv provision --how=local execute --how tmt --interactive login finish
@@ -379,7 +382,7 @@ kubernetes
 $ kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
 service "kubernetes-bootcamp "exposed
 
-$ kubectl get services 
+$ kubectl get services
 NAME                   TYPE       CLUSTER-IP     EXTERNAL-IP     PORT(S)         AGE
 kubernetes             ClusterIP  10.0.0.1       <none>          443/TCP         10m
 kubernetes-bootcamp    NodePort   10.0.0.72      <none>          8080:30216/TCP  32s
@@ -535,9 +538,9 @@ Extracting thumprints with jose:
 jose jwk thp -i- -a <hash here> <file>
 # S1 = sha1, S256 = sha256
 # Examples:
-[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S1 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk 
+[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S1 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk
 Gw9ZtDnys_W0KQEqcVFGvzZjfaI
-[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S256 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk 
+[root@tangdeployment-tangserver-mini-5fd57464f5-lp6s9 /]# jose jwk thp -a S256 -i /var/db/tang/Gw9ZtDnys_W0KQEqcVFGvzZjfaI.jwk
 RRsKpO9dTcIaBIV-CL6LYB9RgsZpZ7NYNuy7P7tXMJo
 
 Slack workspace for k8s cluster:
@@ -611,7 +614,7 @@ data:
   # 1 - Docker login to the private registry
   # 2 - Annotate the docker config.json created (~/.docker/config.json normally)
   # 3 - copy in next line output to 'base64 ~/.docker/config.json' command
-  .dockerconfigjson: eyJh....X0=
+  .dockerconfigjson: eyJ...0=
 type: kubernetes.io/dockerconfigjson
 
 Productization:
@@ -631,7 +634,7 @@ Must add next configuration:
 spec:
   containers:
     - name: whatever
-...    
+...
     securityContext:
       allowPrivilegeEscalation: false
       runAsNonRoot: true
@@ -648,6 +651,7 @@ oc get --raw /apis/daemons.redhat.com/v1alpha1/namespaces/nbde/tangservers | jq
 oc config view
 ...
   server: https://api.ci-ln-n3gvbqk-72292.origin-ci-int-gce.dev.rhcloud.com:6443
+
 
 Dast:
 -----
@@ -679,6 +683,9 @@ oc get secret $(oc get secret | grep ^nbde-tang-server | awk '{print $1}') -o js
 You'll need to set secContext: '{"privileged": true}' at your helm/chart/values.yaml
 (e.g. https://github.com/RedHatProductSecurity/rapidast/blob/development/helm/chart/values.yaml#L14).
 Otherwise, you’ll get ‘violates PodSecurity’ errors.
+
+# For information generated with DAST, you can grab ZAP application from:
+https://www.zaproxy.org/download/
 
 List available operators in catalogue:
 --------------------------------------
@@ -721,8 +728,7 @@ helm -n keylime get all attestation-operator
 Check helm installation history:
 --------------------------------
 helm -n keylime history attestation-operator
-REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION     
-=======
+REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION
 1               Wed Nov 15 15:26:25 2023        superseded      keylime-0.1.0   latest          Install complete
 2               Wed Nov 15 15:29:10 2023        superseded      keylime-0.1.0   latest          Upgrade complete
 3               Wed Nov 15 15:30:02 2023        deployed        keylime-0.1.0   latest          Upgrade complete
@@ -784,4 +790,3 @@ operator-sdk --namespace keylime cleanup attestation-operator
 Jira status refresh on PR:
 --------------------------
 /jira refresh
-/jira recheck
