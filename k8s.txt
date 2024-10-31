@@ -790,3 +790,7 @@ operator-sdk --namespace keylime cleanup attestation-operator
 Jira status refresh on PR:
 --------------------------
 /jira refresh
+
+NBDE Tang Server retry failed Konflux pipelines:
+------------------------------------------------
+/retest
