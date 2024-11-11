@@ -614,7 +614,7 @@ data:
   # 1 - Docker login to the private registry
   # 2 - Annotate the docker config.json created (~/.docker/config.json normally)
   # 3 - copy in next line output to 'base64 ~/.docker/config.json' command
-  .dockerconfigjson: eyJ...0=
+  .dockerconfigjson: eyJh....X0=
 type: kubernetes.io/dockerconfigjson
 
 Productization:
@@ -794,3 +794,49 @@ Jira status refresh on PR:
 NBDE Tang Server retry failed Konflux pipelines:
 ------------------------------------------------
 /retest
+
+Get token for registry.ci.openshift.org:
+----------------------------------------
+Add the ci.openshift.org auth to pull-secret!
+Obtain an API token by visiting https://oauth-openshift.apps.ci.l2s4.p1.openshiftapps.com/oauth/token/request and login w/ GitHub auth, you'll see the link to get the login cmd
+paste in terminal that oc login cmd from above, then run this:
+	oc registry login --to ~/some-dir/pull-secret.json  --> This adds registry.ci to pull secrets json
+
+That "ci.12s4.p1.openshiftapps.com" comes from the "apps.ci" link in the "Clusters" section here: https://docs.ci.openshift.org/docs/getting-started/useful-links/
+
+Your API token is
+sha256...
+Log in with this token
+oc login --token=sha256... --server=https://api.ci.l2s4.p1.openshiftapps.com:6443
+Use this token directly against the API
+curl -H "Authorization: Bearer sha256..." "https://api.ci.l2s4.p1.openshiftapps.com:6443/apis/user.openshift.io/v1/users/~"
+
+Get token for registry.ci.openshift.org:
+----------------------------------------
+Add the ci.openshift.org auth to pull-secret!
+Obtain an API token by visiting https://oauth-openshift.apps.ci.l2s4.p1.openshiftapps.com/oauth/token/request and login w/ GitHub auth, you'll see the link to get the login cmd
+oc login --token=sha256... --server=https://api.ci.l2s4.p1.openshiftapps.com:6443
+oc registry login --to ~/docker/config.json
+podman pull registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.22-openshift-4.18
+
+Read token once logged:
+-----------------------
+$ cat ${XDG_RUNTIME_DIR}/containers/auth.json
+{
+        "auths": {
+                "brew.registry.redhat.io": {
+                        "auth": "c2..=="
+                }
+        }
+}
+
+Inspect tags for a particular container:
+----------------------------------------
+skopeo inspect docker://registry.redhat.io/openshift4/ose-kube-rbac-proxy:latest
+
+List of multi arch builds supported by Konflux:
+-----------------------------------------------
+linux/x86_64
+linux/arm64
+linux/ppc64le
+linux/s390x
