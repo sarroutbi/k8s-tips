@@ -559,6 +559,7 @@ launch 4.16.0-0.nightly-arm64-2024-10-09-181834 arm64
 https://arm64.ocp.releases.ci.openshift.org/
 # Multiarch:
 launch 4.18.0-0.nightly-multi-2024-10-18-023430 multi
+launch 4.17.0-0.nightly-multi-2024-11-13-161427 multi
 
 Launching a particular version in K8S ROSA cluster (slack):
 -----------------------------------------------------------
@@ -804,12 +805,13 @@ paste in terminal that oc login cmd from above, then run this:
 
 That "ci.12s4.p1.openshiftapps.com" comes from the "apps.ci" link in the "Clusters" section here: https://docs.ci.openshift.org/docs/getting-started/useful-links/
 
+
 Your API token is
-sha256...
+sha256~...
 Log in with this token
-oc login --token=sha256... --server=https://api.ci.l2s4.p1.openshiftapps.com:6443
+oc login --token=sha256~... --server=https://api.ci.l2s4.p1.openshiftapps.com:6443
 Use this token directly against the API
-curl -H "Authorization: Bearer sha256..." "https://api.ci.l2s4.p1.openshiftapps.com:6443/apis/user.openshift.io/v1/users/~"
+curl -H "Authorization: Bearer sha256~..." "https://api.ci.l2s4.p1.openshiftapps.com:6443/apis/user.openshift.io/v1/users/~"
 
 Get token for registry.ci.openshift.org:
 ----------------------------------------
@@ -840,3 +842,12 @@ linux/x86_64
 linux/arm64
 linux/ppc64le
 linux/s390x
+
+Konflux: Take a token from cluster
+----------------------------------
+# Get Token from:
+https://oauth-openshift.apps.stone-prd-rh01.pg1f.p1.openshiftapps.com/oauth/token/display
+# Then, oc login:
+oc login --token=sha256~... --server=https://api.stone-prd-rh01.pg1f.p1.openshiftapps.com:6443
+# Or curl:
+curl -H "Authorization: Bearer sha256~..." "https://api.stone-prd-rh01.pg1f.p1.openshiftapps.com:6443/apis/user.openshift.io/v1/users/~"
