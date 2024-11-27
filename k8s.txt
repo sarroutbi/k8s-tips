@@ -864,10 +864,14 @@ curl -H "Authorization: Bearer sha256~..." "https://api.stone-prd-rh01.pg1f.p1.o
 Some images for testing:
 ------------------------
 #IIB:
-registry-proxy.engineering.redhat.com/rh-osbs/iib:863070
+registry-proxy.engineering.redhat.com/rh-osbs/iib:872962
 
 #Non-IIB FBC:
 quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/fbc-4-17:ecda9b37196293439764decbb32c1ca0af047d01
 
 #Latest multiarch bundle compiled correctly and containing correct label (konflux....):
 quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle@sha256:d470832d6b19fff23fc764d81069e20854861cf7d9b818292b66df9cd6e23251
+
+Bring image to OpenShift cluster:
+---------------------------------
+https://docs.openshift.com/container-platform/4.17/registry/accessing-the-registry.html
