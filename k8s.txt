@@ -180,6 +180,10 @@ TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc DOWNSTREAM_IMAGE_VERSION=quay.io/
 # Cluster execution with TMT:
 IMAGE_VERSION="quay.io/sec-eng-special/tang-operator-bundle:v0.0.26" TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc tmt --context distro=rhel-9.3.0 run plan --name operator-oc -vvv prepare discover -h fmf -vv provision --how=local execute --how tmt --interactive login finish
 
+# Cluster execution with Konflux FBC:
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc KONFLUX=1 OPERATOR_NAMESPACE=openshift-operators OPERATOR_NAME=nbde-tang-server V=1 IIB_CATALOG_IMAGE="brew.registry.redhat.io/rh-osbs/iib:863070" make
+IMPORTANT: Although FBC returns proxy-engineering.redhat.com brew.registry.redhat.io must be used
+
 Operator SDK tang-operator basis:
 ---------------------------------
 group=daemons
@@ -806,20 +810,25 @@ paste in terminal that oc login cmd from above, then run this:
 That "ci.12s4.p1.openshiftapps.com" comes from the "apps.ci" link in the "Clusters" section here: https://docs.ci.openshift.org/docs/getting-started/useful-links/
 
 
-Your API token is
+# Your API token is
 sha256~...
-Log in with this token
+# Log in with this token
 oc login --token=sha256~... --server=https://api.ci.l2s4.p1.openshiftapps.com:6443
-Use this token directly against the API
+# Use this token directly against the API
 curl -H "Authorization: Bearer sha256~..." "https://api.ci.l2s4.p1.openshiftapps.com:6443/apis/user.openshift.io/v1/users/~"
 
 Get token for registry.ci.openshift.org:
 ----------------------------------------
-Add the ci.openshift.org auth to pull-secret!
-Obtain an API token by visiting https://oauth-openshift.apps.ci.l2s4.p1.openshiftapps.com/oauth/token/request and login w/ GitHub auth, you'll see the link to get the login cmd
+# Add the ci.openshift.org auth to pull-secret!
+# Obtain an API token by visiting https://oauth-openshift.apps.ci.l2s4.p1.openshiftapps.com/oauth/token/request and login w/ GitHub auth, you'll see the link to get the login cmd
 oc login --token=sha256... --server=https://api.ci.l2s4.p1.openshiftapps.com:6443
 oc registry login --to ~/docker/config.json
 podman pull registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.22-openshift-4.18
+
+Get token for current cluster through API:
+------------------------------------------
+Top corner -> kube:admin -> "Copy login command" -> Display Token:
+oc login --token=sha256~... --server=https://api.ci-ln-pi57gw2-72292.gcp-2.ci.openshift.org:6443
 
 Read token once logged:
 -----------------------
@@ -851,3 +860,14 @@ https://oauth-openshift.apps.stone-prd-rh01.pg1f.p1.openshiftapps.com/oauth/toke
 oc login --token=sha256~... --server=https://api.stone-prd-rh01.pg1f.p1.openshiftapps.com:6443
 # Or curl:
 curl -H "Authorization: Bearer sha256~..." "https://api.stone-prd-rh01.pg1f.p1.openshiftapps.com:6443/apis/user.openshift.io/v1/users/~"
+
+Some images for testing:
+------------------------
+#IIB:
+registry-proxy.engineering.redhat.com/rh-osbs/iib:863070
+
+#Non-IIB FBC:
+quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/fbc-4-17:ecda9b37196293439764decbb32c1ca0af047d01
+
+#Latest multiarch bundle compiled correctly and containing correct label (konflux....):
+quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle@sha256:d470832d6b19fff23fc764d81069e20854861cf7d9b818292b66df9cd6e23251
