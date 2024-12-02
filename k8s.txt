@@ -863,8 +863,10 @@ curl -H "Authorization: Bearer sha256~..." "https://api.stone-prd-rh01.pg1f.p1.o
 
 Some images for testing:
 ------------------------
-#IIB:
-registry-proxy.engineering.redhat.com/rh-osbs/iib:872962
+#IIB (4.17):
+brew.registry.redhat.io/rh-osbs/iib:875039
+#IIB (4.18):
+brew.registry.redhat.io/rh-osbs/iib:875102
 
 #Non-IIB FBC:
 quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/fbc-4-17:ecda9b37196293439764decbb32c1ca0af047d01
@@ -881,8 +883,32 @@ oc get nodes
 oc debug nodes/<node_name>
 sh-4.2# chroot /host
 sh-4.2# oc login -u kubeadmin -p <password_from_install_log> https://api-int.<cluster_name>.<base_domain>:6443
+### In case it is a cluster bot one, it should be something like:
+sh-4.2# oc login -u kubeadmin -p <password_from_install_log> https://ad395bbfb9d1f4715ba7aaa20bee14a4-2a7669521c7ea7f1.elb.us-east-1.amazonaws.com:6443
 sh-4.2# podman login -u kubeadmin -p $(oc whoami -t) image-registry.openshift-image-registry.svc:5000
 sh-4.2# podman pull <name.io>/<image>
 sh-4.2# podman tag <name.io>/<image> image-registry.openshift-image-registry.svc:5000/openshift/<image>
 sh-4.2# podman push image-registry.openshift-image-registry.svc:5000/openshift/<image>
 # Then, you can use the image from local registry
+
+Errata information for NBDE Tang Server:
+----------------------------------------
+# YAML format:
+--------------
+synopsis: |
+  OpenShift NBDE Tang Server Operator update
+topic: |
+  An updated NBDE Tang Server Operator image is now available for the Red Hat OpenShift Enterprise 4 catalog.
+description: |
+  The NBDE Tang Server Operator v1.1.0 is now available. See the documentation for bug fix information:
+  https://docs.openshift.com/container-platform/4.17/security/nbde_tang_server_operator/nbde-tang-server-operator-release-notes.html
+references:
+  - https://catalog.redhat.com/search?q=nbde-tang-server
+  - https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/security_and_compliance/nbde-tang-server-operator
+solution: |
+  Before applying this update, make sure all previously released errata relevant to your system have been applied.
+  For details on how to apply this update, refer to:
+references: |
+  https://docs.openshift.com/container-platform/4.17/updating/updating_a_cluster/updating-cluster-cli.html
+  https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/security_and_compliance/nbde-tang-server-operator
+  https://redhat-connect.gitbook.io/catalog-help/container-images/container-health
