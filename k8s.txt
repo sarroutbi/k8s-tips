@@ -566,6 +566,8 @@ https://arm64.ocp.releases.ci.openshift.org/
 # Multiarch:
 launch 4.18.0-0.nightly-multi-2024-10-18-023430 multi
 launch 4.17.0-0.nightly-multi-2024-11-13-161427 multi
+# Powervs:
+launch nightly hypershift-hosted-powervs,multi
 
 Launching a particular version in K8S ROSA cluster (slack):
 -----------------------------------------------------------
@@ -868,7 +870,8 @@ curl -H "Authorization: Bearer sha256~..." "https://api.stone-prd-rh01.pg1f.p1.o
 Some images for testing:
 ------------------------
 #IIB (4.17):
-brew.registry.redhat.io/rh-osbs/iib:883501
+brew.registry.redhat.io/rh-osbs/iib:884613
+
 #IIB (4.18):
 brew.registry.redhat.io/rh-osbs/iib:875102
 
@@ -975,3 +978,9 @@ https://gitlab.cee.redhat.com/rhtap-release/advisories/-/blob/main/data/advisori
   containerImage: registry.stage.redhat.io/nbde-tang-server/nbde-tang-server-operator-bundle@sha256:75fc8349626c50ed3f0716c317e180a359c7e66624c5a9bbdd93c809f0bd9eb0
 # We can install it through:
 V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1@sha256:75fc8349626c50ed3f0716c317e180a359c7e66624c5a9bbdd93c809f0bd9eb0" OPERATOR_NAMESPACE=openshift-operators make
+
+Existing Bundle that can be tested (with prior application of Image Digest Mirror):
+-----------------------------------------------------------------------------------
+quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6
+# An example to apply this image:
+V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6" OPERATOR_NAMESPACE=openshift-operators make
