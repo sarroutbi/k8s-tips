@@ -984,3 +984,5 @@ Existing Bundle that can be tested (with prior application of Image Digest Mirro
 quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6
 # An example to apply this image:
 V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6" OPERATOR_NAMESPACE=openshift-operators make
+# Or in "No Verbose" mode:
+TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6" OPERATOR_NAMESPACE=openshift-operators make
