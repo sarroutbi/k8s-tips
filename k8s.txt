@@ -977,12 +977,17 @@ https://gitlab.cee.redhat.com/rhtap-release/advisories/-/blob/main/data/advisori
   component: nbde-tang-server-multiarch-bundle-1-1
   containerImage: registry.stage.redhat.io/nbde-tang-server/nbde-tang-server-operator-bundle@sha256:75fc8349626c50ed3f0716c317e180a359c7e66624c5a9bbdd93c809f0bd9eb0
 # We can install it through:
-V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1@sha256:75fc8349626c50ed3f0716c317e180a359c7e66624c5a9bbdd93c809f0bd9eb0" OPERATOR_NAMESPACE=openshift-operators make
+KONLFUX=1 OPERATOR_NAME=nbde-tang-server V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1@sha256:75fc8349626c50ed3f0716c317e180a359c7e66624c5a9bbdd93c809f0bd9eb0" OPERATOR_NAMESPACE=openshift-operators make
 
 Existing Bundle that can be tested (with prior application of Image Digest Mirror):
 -----------------------------------------------------------------------------------
 quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6
 # An example to apply this image:
-V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6" OPERATOR_NAMESPACE=openshift-operators make
+KONFLUX=1 OPERATOR_NAME=nbde-tang-server V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6" OPERATOR_NAMESPACE=openshift-operators make
 # Or in "No Verbose" mode:
-TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6" OPERATOR_NAMESPACE=openshift-operators make
+KONFLUX=1 OPERATOR_NAME=nbde-tang-server TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6" OPERATOR_NAMESPACE=openshift-operators make
+
+RELEASE CANDIDATE:
+------------------
+Bundle:          quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:aa21fc4a1e5fc07d87addc414f41655ad59e87dc
+Bundle:(sha256): quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1@sha256:765e17380d5c7385ab476d49e4472e7163a0d8102fd03ad5b46d81cf754b98de
