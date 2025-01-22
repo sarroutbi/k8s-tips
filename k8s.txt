@@ -902,23 +902,22 @@ Errata information for NBDE Tang Server:
 ----------------------------------------
 # YAML format:
 --------------
+product name: |
+  NBDE Tang Server Operator
 synopsis: |
   OpenShift NBDE Tang Server Operator update
 topic: |
   An updated NBDE Tang Server Operator image is now available for the Red Hat OpenShift Enterprise 4 catalog.
 description: |
   The NBDE Tang Server Operator v1.1.0 is now available. See the documentation for bug fix information:
-  https://docs.openshift.com/container-platform/4.17/security/nbde_tang_server_operator/nbde-tang-server-operator-release-notes.html
-references:
+  https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/security_and_compliance/nbde-tang-server-operator#nbde-tang-server-operator-release-notes
+references: |
   - https://catalog.redhat.com/search?q=nbde-tang-server
   - https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/security_and_compliance/nbde-tang-server-operator
 solution: |
   Before applying this update, make sure all previously released errata relevant to your system have been applied.
   For details on how to apply this update, refer to:
-references: |
-  https://docs.openshift.com/container-platform/4.17/updating/updating_a_cluster/updating-cluster-cli.html
-  https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/security_and_compliance/nbde-tang-server-operator
-  https://redhat-connect.gitbook.io/catalog-help/container-images/container-health
+  https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/updating_clusters/performing-a-cluster-update
 
 Access Konflux cluster externally:
 ----------------------------------
@@ -991,3 +990,24 @@ RELEASE CANDIDATE:
 ------------------
 Bundle:          quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:aa21fc4a1e5fc07d87addc414f41655ad59e87dc
 Bundle:(sha256): quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1@sha256:765e17380d5c7385ab476d49e4472e7163a0d8102fd03ad5b46d81cf754b98de
+Bundle:          quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:3bc142d0a31f7ad7cd99504f21b00702079603c0
+Bundle:(sha256): quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1@sha256:b0bb3c502dad2e5b4773a56850e831b9e6cc203cfa2f4eab6f2db7ce328a3fad
+
+RELEASE CANDIDATES FROM RELEASE:
+--------------------------------
+# Link: https://gitlab.cee.redhat.com/releng/advisories/-/blob/main/data/advisories/konflux-sec-eng-spec-tenant/2025/0533/advisory.yaml
+# Konflux Link: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/nbde-tang-server-1-1/pipelineruns/managed-ht6pq
+Container: registry.redhat.io/nbde-tang-server/nbde-tang-server-rhel9-operator@sha256:9799f7ac5389f87db46868e4bcad12544d8b818e801b7f12af6a9ed9420d8661
+Bundle   : registry.redhat.io/nbde-tang-server/nbde-tang-server-operator-bundle@sha256:15b9b28e375c57adfb3c5b78be0312bea09c5be8759f9264c9a23c82d086f334
+
+## FBCs:
+# Link FBC 4.17: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-17/pipelineruns/managed-b4vsd
+FBC 4.17 : registry-proxy.engineering.redhat.com/rh-osbs/iib:900683
+
+# Link FBC 4.18: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-18/pipelineruns/managed-f5vws
+FBC 4.18 : registry-proxy.engineering.redhat.com/rh-osbs/iib:900684
+
+TAGS for release:
+-----------------
+RELEASE_DATE: 202501211920
+RELEASE_AUTHOR: Sergio-Arroutbi-Braojos
