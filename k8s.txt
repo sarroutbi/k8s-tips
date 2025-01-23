@@ -185,6 +185,7 @@ V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc KONFLUX=1 OPERATOR_NAMESPACE=
 # IMPORTANT: Although FBC returns proxy-engineering.redhat.com, brew.registry.redhat.io must be used.
 # When working with local cluster registry:
 V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc KONFLUX=1 OPERATOR_NAMESPACE=openshift-operators OPERATOR_NAME=nbde-tang-server IIB_CATALOG_IMAGE="image-registry.openshift-image-registry.svc:5000/openshift/iib:880871" make
+V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc KONFLUX=1 OPERATOR_NAMESPACE=openshift-operators OPERATOR_NAME=nbde-tang-server IIB_CATALOG_IMAGE="image-registry.openshift-image-registry.svc:5000/openshift/iib:902404" make
 
 Operator SDK tang-operator basis:
 ---------------------------------
@@ -1001,13 +1002,18 @@ Container: registry.redhat.io/nbde-tang-server/nbde-tang-server-rhel9-operator@s
 Bundle   : registry.redhat.io/nbde-tang-server/nbde-tang-server-operator-bundle@sha256:15b9b28e375c57adfb3c5b78be0312bea09c5be8759f9264c9a23c82d086f334
 
 ## FBCs:
-# Link FBC 4.17: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-17/pipelineruns/managed-b4vsd
-FBC 4.17 : registry-proxy.engineering.redhat.com/rh-osbs/iib:900683
+# Link FBC 4.17: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-17/pipelineruns/managed-cthvs
+FBC 4.17 : registry-proxy.engineering.redhat.com/rh-osbs/iib:902404
 
-# Link FBC 4.18: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-18/pipelineruns/managed-f5vws
-FBC 4.18 : registry-proxy.engineering.redhat.com/rh-osbs/iib:900684
+# Link FBC 4.18: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-18/pipelineruns/managed-52h4s
+FBC 4.18 : registry-proxy.engineering.redhat.com/rh-osbs/iib:902403
 
 TAGS for release:
 -----------------
 RELEASE_DATE: 202501211920
 RELEASE_AUTHOR: Sergio-Arroutbi-Braojos
+
+Mirroring to local Openshift registry with mirror_image.py tool:
+----------------------------------------------------------------
+# /tmp/deleteme of the form (user:password)
+./tools/cluster_tools/mirror_image.py -c CLUSTER_PASSWORD_HERE -f /tmp/deleteme -o brew.registry.redhat.io/rh-osbs/iib:902403
