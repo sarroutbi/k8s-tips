@@ -1002,11 +1002,12 @@ Container: registry.redhat.io/nbde-tang-server/nbde-tang-server-rhel9-operator@s
 Bundle   : registry.redhat.io/nbde-tang-server/nbde-tang-server-operator-bundle@sha256:15b9b28e375c57adfb3c5b78be0312bea09c5be8759f9264c9a23c82d086f334
 
 ## FBCs:
-# Link FBC 4.17: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-17/pipelineruns/managed-cthvs
-FBC 4.17 : registry-proxy.engineering.redhat.com/rh-osbs/iib:902404
+# Link FBC 4.17: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-17/pipelineruns/managed-2wtn9
+FBC 4.17 (tested before FBC Opt In): registry-proxy.engineering.redhat.com/rh-osbs/iib:902404
+registry-proxy.engineering.redhat.com/rh-osbs/iib-pub:v4.17
 
-# Link FBC 4.18: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-18/pipelineruns/managed-52h4s
-FBC 4.18 : registry-proxy.engineering.redhat.com/rh-osbs/iib:902403
+# Link FBC 4.18: https://console.redhat.com/application-pipeline/workspaces/rhtap-releng/applications/fbc-4-18/pipelineruns/managed-v9ljt
+FBC 4.18 (tested before FBC Opt In): registry-proxy.engineering.redhat.com/rh-osbs/iib:902403
 
 TAGS for release:
 -----------------
