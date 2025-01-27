@@ -1018,3 +1018,14 @@ Mirroring to local Openshift registry with mirror_image.py tool:
 ----------------------------------------------------------------
 # /tmp/deleteme of the form (user:password)
 ./tools/cluster_tools/mirror_image.py -c CLUSTER_PASSWORD_HERE -f /tmp/deleteme -o brew.registry.redhat.io/rh-osbs/iib:902403
+
+Checking rendered catalog:
+--------------------------
+opm render registry.redhat.io/redhat/redhat-operator-index@sha256:14db13b34249516bedf4379f836153f8a1e67b9eb2440bf87baabb0eb80e0729 > catalog-pushed
+opm render registry.redhat.io/redhat/redhat-operator-index:v4.17 > catalog-latest
+PACKAGE_NAME="nbde-tang-server"
+jq_unique_bundles='select( .package == "'$PACKAGE_NAME'" ) | select(.schema == "olm.bundle") | select( [.properties[]|select(.type == "olm.deprecated")] == []) | "\(.image)"'
+cat catalog-pushed | jq -r "$jq_unique_bundles"
+registry.redhat.io/nbde-tang-server/nbde-tang-server-operator-bundle@sha256:b0bb3c502dad2e5b4773a56850e831b9e6cc203cfa2f4eab6f2db7ce328a3fad
+cat catalog-latest | jq -r "$jq_unique_bundles"
+registry.redhat.io/nbde-tang-server/nbde-tang-server-operator-bundle@sha256:b0bb3c502dad2e5b4773a56850e831b9e6cc203cfa2f4eab6f2db7ce328a3fad
