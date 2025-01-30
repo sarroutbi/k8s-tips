@@ -564,6 +564,9 @@ launch 4.14 gcp
 launch 4.16.0-0.nightly-arm64-2024-10-09-181834 arm64
 # To find builds:
 https://arm64.ocp.releases.ci.openshift.org/
+https://amd64.ocp.releases.ci.openshift.org/
+# Example for particular build:
+launch 4.17.0-0.ci-2025-01-27-125930 aws
 # Multiarch:
 launch 4.18.0-0.nightly-multi-2024-10-18-023430 multi
 launch 4.17.0-0.nightly-multi-2024-11-13-161427 multi
@@ -1029,3 +1032,9 @@ cat catalog-pushed | jq -r "$jq_unique_bundles"
 registry.redhat.io/nbde-tang-server/nbde-tang-server-operator-bundle@sha256:b0bb3c502dad2e5b4773a56850e831b9e6cc203cfa2f4eab6f2db7ce328a3fad
 cat catalog-latest | jq -r "$jq_unique_bundles"
 registry.redhat.io/nbde-tang-server/nbde-tang-server-operator-bundle@sha256:b0bb3c502dad2e5b4773a56850e831b9e6cc203cfa2f4eab6f2db7ce328a3fad
+
+Test execution with release:
+----------------------------
+# 1 - Install release through UI
+# 2 - Execute without image, decreasing controller terminate timeout and disabling bundle tests
+TO_ALL_POD_CONTROLLER_TERMINATE=10 V=1 KONFLUX=1 OPERATOR_NAME=nbde-tang-server TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc DISABLE_BUNDLE_INSTALL_TESTS=1 OPERATOR_NAMESPACE=openshift-operators make
