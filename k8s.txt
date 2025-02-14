@@ -148,8 +148,8 @@ https://github.com/RedHat-SP-Security/tests.git
 make
 
 # Execution with particular tang image (for minikube)
-TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
-IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v1.0.13" TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
+KONFLUX=1 OPERATOR_NAME=nbde-tang-server TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
+KONFLUX=1 OPERATOR_NAME=nbde-tang-server IMAGE_VERSION="quay.io/sarroutb/tang-operator-bundle:v1.0.13" TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
 # With specific operator name
 OPERATOR_NAME=nbde-tang-server V=1 IMAGE_VERSION="quay.io/sarroutb/nbde-tang-server-bundle:v1.0.14" TANG_IMAGE="quay.io/sec-eng-special/fedora_tang_server" make
 # Konflux build:
@@ -560,6 +560,8 @@ Launching a particular version in K8S cluster (slack):
 launch 4.12.0-ec.5 gcp
 launch 4.14 aws
 launch 4.14 gcp
+# A particular nightly build
+launch 4.17.0-0.nightly-2025-02-13-204319 aws
 # For a particular architecture:
 launch 4.16.0-0.nightly-arm64-2024-10-09-181834 arm64
 # To find builds:
