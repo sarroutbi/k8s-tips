@@ -1040,3 +1040,8 @@ Test execution with release:
 # 1 - Install release through UI
 # 2 - Execute without image, decreasing controller terminate timeout and disabling bundle tests
 TO_ALL_POD_CONTROLLER_TERMINATE=10 V=1 KONFLUX=1 OPERATOR_NAME=nbde-tang-server TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc DISABLE_BUNDLE_INSTALL_TESTS=1 OPERATOR_NAMESPACE=openshift-operators make
+
+Run modernize to check current Golang code status:
+--------------------------------------------------
+# Based on gopls
+go run golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest -fix -test ./...
