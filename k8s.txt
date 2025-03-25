@@ -204,10 +204,12 @@ make undeploy
 Operator uninstallation:
 ------------------------
 operator-sdk cleanup tang-operator
+operator-sdk cleanup nbde-tang-server
 
 Operator Uninstallation:
 ------------------------
 operator-sdk cleanup tang-operator
+operator-sdk cleanup nbde-tang-server
 
 Operator clusterservice modifications:
 --------------------------------------
@@ -1045,3 +1047,9 @@ Run modernize to check current Golang code status:
 --------------------------------------------------
 # Based on gopls
 go run golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest -fix -test ./...
+
+Konflux rhtap (release) paths:
+------------------------------
+config/stone-prd-rh01.pg1f.p1/product/EnterpriseContractPolicy/
+config/stone-prd-rh01.pg1f.p1/product/ReleasePlanAdmission/
+config/stone-prd-rh01.pg1f.p1/product/policies/
