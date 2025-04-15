@@ -1053,3 +1053,16 @@ Konflux rhtap (release) paths:
 config/stone-prd-rh01.pg1f.p1/product/EnterpriseContractPolicy/
 config/stone-prd-rh01.pg1f.p1/product/ReleasePlanAdmission/
 config/stone-prd-rh01.pg1f.p1/product/policies/
+
+Pipeline checker (for Konflux):
+-------------------------------
+# Repository:
+https://github.com/simonbaird/konflux-pipeline-patcher
+# Installation:
+cd /usr/local/bin
+sudo sh -c 'curl -sLO https://github.com/simonbaird/konflux-pipeline-patcher/raw/main/pipeline-patcher && chmod a+x ./pipeline-patcher'
+# Installation of dependencies:
+sudo dnf install -y bash curl awk sed jq git oras yq
+# Modification of the pipelines:
+cd <git-repo> (nbde-tang-server)
+pipeline-patcher patch-all . $(pipeline-patcher list-tasks | awk '{print $1}' | sed -e 's@$@,@g' | tr -d '\n'
