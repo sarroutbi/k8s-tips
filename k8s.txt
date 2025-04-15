@@ -810,9 +810,11 @@ Jira status refresh on PR:
 --------------------------
 /jira refresh
 
-NBDE Tang Server retry failed Konflux pipelines:
-------------------------------------------------
+NBDE Tang Server retry all Konflux pipelines:
+---------------------------------------------
 /retest
+# Retest particular pipeline:
+/retest fbc-4-18-on-pull-request
 
 Get token for registry.ci.openshift.org:
 ----------------------------------------
