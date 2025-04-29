@@ -1072,7 +1072,7 @@ sudo sh -c 'curl -sLO https://github.com/simonbaird/konflux-pipeline-patcher/raw
 sudo dnf install -y bash curl awk sed jq git oras yq
 # Modification of the pipelines:
 cd <git-repo> (nbde-tang-server)
-pipeline-patcher patch-all . $(pipeline-patcher list-tasks | awk '{print $1}' | sed -e 's@$@,@g' | tr -d '\n'
+pipeline-patcher patch-all . $(pipeline-patcher list-tasks | awk '{print $1}' | sed -e 's@$@,@g' | tr -d '\n')
 
 Latest stage candidates:
 ------------------------
