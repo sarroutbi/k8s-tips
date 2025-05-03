@@ -995,6 +995,9 @@ quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multi
 KONFLUX=1 OPERATOR_NAME=nbde-tang-server V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6" OPERATOR_NAMESPACE=openshift-operators make
 # Or in "No Verbose" mode:
 KONFLUX=1 OPERATOR_NAME=nbde-tang-server TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:605bbccaf6f188e7a5dd220b71821c043ee0dfd6" OPERATOR_NAMESPACE=openshift-operators make
+# Or in "Verbose" mode:
+V=1 KONFLUX=1 OPERATOR_NAME=nbde-tang-server TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc IMAGE_VERSION="quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:bdf74b7058ae36ce328071ce13a5cd74fc0e0f0f" OPERATOR_NAMESPACE=openshift-operators make
+
 
 RELEASE CANDIDATE:
 ------------------
