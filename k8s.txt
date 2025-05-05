@@ -1079,5 +1079,6 @@ pipeline-patcher patch-all . $(pipeline-patcher list-tasks | awk '{print $1}' | 
 
 Latest stage candidates:
 ------------------------
-FBC 4.17 Candidate: registry-proxy.engineering.redhat.com/rh-osbs/iib:964865
-FBC 4.18 Candidate: registry-proxy.engineering.redhat.com/rh-osbs/iib:964835
+FBC 4.17 Candidate: registry-proxy.engineering.redhat.com/rh-osbs/iib:965124
+FBC 4.18 Candidate: registry-proxy.engineering.redhat.com/rh-osbs/iib:965125
+Bundle Candidate: quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1@sha256:79bf610b144cbdf4404a1153f1c395179ce1743274eec7102c862aae4f45890a
