@@ -139,6 +139,11 @@ make test
 # For inspection of coverage, use go tool:
 go tool cover -html=cover.out
 
+# Alternative for nbde-tang-server
+make podman-build podman-push IMG="quay.io/sarroutb/nbde-tang-server:v1.1.1"
+make bundle IMG="quay.io/sarroutb/nbde-tang-server:v1.1.1"
+make podman-bundle-build podman-bundle-push BUNDLE_IMG="quay.io/sarroutb/nbde-tang-server-bundle:v1.1.1"
+
 Tang operator beaker tests:
 ---------------------------
 # Repository
