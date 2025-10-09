@@ -1058,6 +1058,10 @@ Test execution with version from official catalog:
 # 2 - Execute without image, decreasing controller terminate timeout and disabling bundle tests
 DISABLE_IMAGE_MIRROR=1 TO_ALL_POD_CONTROLLER_TERMINATE=10 V=1 KONFLUX=1 OPERATOR_NAME=nbde-tang-server TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc OPERATOR_NAMESPACE=openshift-operators DISABLE_BUNDLE_INSTALL_TESTS=1 make
 
+Test execution with version from Konflux Image:
+-----------------------------------------------
+IMAGE_VERSION=quay.io/redhat-user-workloads/konflux-sec-eng-spec-tenant/nbde-tang-server-multiarch-bundle-1-1:on-pr-7c68fb5723076c70be78105bb3b98ebbf353c820 TO_ALL_POD_CONTROLLER_TERMINATE=10 V=1 KONFLUX=1 OPERATOR_NAME=nbde-tang-server TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc OPERATOR_NAMESPACE=openshift-operators make
+
 Run modernize to check current Golang code status:
 --------------------------------------------------
 # Based on gopls
