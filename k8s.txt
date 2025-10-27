@@ -581,6 +581,8 @@ launch 4.18.0-0.nightly-multi-2024-10-18-023430 multi
 launch 4.17.0-0.nightly-multi-2024-11-13-161427 multi
 # Powervs:
 launch nightly hypershift-hosted-powervs,multi
+# Launch with extra parameters:
+launch 4.21.0-0.nightly aws,techpreview
 
 Launching a particular version in K8S ROSA cluster (slack):
 -----------------------------------------------------------
