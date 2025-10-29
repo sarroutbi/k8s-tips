@@ -185,6 +185,29 @@ TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc DOWNSTREAM_IMAGE_VERSION=quay.io/
 # Cluster execution with TMT:
 IMAGE_VERSION="quay.io/sec-eng-special/tang-operator-bundle:v0.0.26" TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc tmt --context distro=rhel-9.3.0 run plan --name operator-oc -vvv prepare discover -h fmf -vv provision --how=local execute --how tmt --interactive login finish
 
+# Cluster execution, no root required, local plan (Plans/operator-oc-noprep.fmf):
+TO_ALL_POD_CONTROLLER_TERMINATE=10 V=1 KONFLUX=1 OPERATOR_NAME=nbde-tang-server TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc OPERATOR_NAMESPACE=nbde-tang-server-system tmt --context distro=fedora-42 run plan --name operator-oc-noprep -vvv discover -h fmf -vv provision --how=local --feeling-safe execute --how tmt --interactive login finish
+# Where Plans/operator-oc-noprep.fmf:
+summary: test plan for running in oc without prepare step (no root required)
+
+environment:
+  TEST_OC_CLIENT: "oc"
+
+discover:
+  how: fmf
+  test:
+   - /Setup/creating_test_namespace
+   - /Sanity
+   - /Setup/clean_cluster
+
+adjust:
+  - when: OC is defined and OC == false
+    enabled: false
+    because: we want to run this plan only for downstream testing
+
+execute:
+    how: tmt
+
 # Cluster execution with Konflux FBC:
 V=1 TEST_EXTERNAL_CLUSTER_MODE=1 TEST_OC_CLIENT=oc KONFLUX=1 OPERATOR_NAMESPACE=openshift-operators OPERATOR_NAME=nbde-tang-server IIB_CATALOG_IMAGE="brew.registry.redhat.io/rh-osbs/iib:863070" make
 # IMPORTANT: Although FBC returns proxy-engineering.redhat.com, brew.registry.redhat.io must be used.
