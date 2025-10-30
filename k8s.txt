@@ -606,6 +606,9 @@ launch 4.17.0-0.nightly-multi-2024-11-13-161427 multi
 launch nightly hypershift-hosted-powervs,multi
 # Launch with extra parameters:
 launch 4.21.0-0.nightly aws,techpreview
+# Launch a particular registry image:
+launch registry.ci.openshift.org/rhcos-devel/ocp-4.20-10.1:ocp-release-4.20.0-rc.3-x86_64
+launch registry.ci.openshift.org/rhcos-devel/ocp-4.20-10.1:ocp-release-4.20.0-rc.3-x86_64 aws
 
 Launching a particular version in K8S ROSA cluster (slack):
 -----------------------------------------------------------
