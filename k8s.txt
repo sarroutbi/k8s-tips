@@ -1129,3 +1129,10 @@ https://devservices.dpp.openshift.com/support/github_access_request/
 How to request permissions and support for other Hybrid Cloud stuff:
 --------------------------------------------------------------------
 https://devservices.dpp.openshift.com/support/
+
+RapiDAST export:
+----------------
+# GCP URL:
+https://console.cloud.google.com/storage/browser/secaut-bucket/nbde-tang-server
+# Execution of the tests with key file to perform export of the results:
+GCS_KEY_FILE=/path/to/your/gcs-key.json ... V=1 make
