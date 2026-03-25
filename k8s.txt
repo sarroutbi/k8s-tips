@@ -1136,3 +1136,4 @@ RapiDAST export:
 https://console.cloud.google.com/storage/browser/secaut-bucket/nbde-tang-server
 # Execution of the tests with key file to perform export of the results:
 GCS_KEY_FILE=/path/to/your/gcs-key.json ... V=1 make
+# For the json file, look mail with subject: "SecAut Bucket Service Account 'rapidast-sa-nbde-tang-server" Created (Key Attached)'
